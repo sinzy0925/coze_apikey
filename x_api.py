@@ -40,6 +40,7 @@ def main(apikey: str, query: str, count: str, types: str, user: str) -> dict:
         response = requests.get(url_with_buster, timeout=20)
         response.raise_for_status() # 404などのエラーをチェック
         file_content = response.text
+        print(url_with_buster)
         print(file_content)
 
         response = requests.post(url, headers=headers, json=payload)
