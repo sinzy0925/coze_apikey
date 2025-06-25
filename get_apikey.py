@@ -22,7 +22,8 @@ def main() -> dict:
         
         # 2. ファイルの全内容を文字列として取得
         file_content = response.text
-        
+
+        print(file_content)
         # 3. 正規表現でパターンを検索
         match = pattern.search(file_content)
         
