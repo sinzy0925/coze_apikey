@@ -1,7 +1,7 @@
 import requests
 import json,time
 
-raw_url = "https://raw.githubusercontent.com/sinzy0925/coze_apikey/main/README.md"
+raw_url = "https://raw.githubusercontent.com/sinzy0925/coze_apikey/main/README1.md"
 
 
 def main(apikey: str, query: str, count: str, types: str, user: str) -> dict:
