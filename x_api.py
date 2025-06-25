@@ -30,10 +30,17 @@ def main(apikey: str, query: str, count: str, types: str, user: str) -> dict:
         }
     }
 
+    # --- ★★★ キャッシュバスティングの処理 ★★★ ---
+    # URLの末尾に、現在のUNIXタイムスタンプをダミーパラメータとして付与
+    cache_buster = int(time.time())
+    url_with_buster = f"{raw_url}?v={cache_buster}"
+    # --- ★★★ ここまで ★★★ ---
+
     try:
-        response = requests.get(raw_url, timeout=10)
+        response = requests.get(url_with_buster, timeout=20)
         response.raise_for_status() # 404などのエラーをチェック
         file_content = response.text
+        print(file_content)
 
         response = requests.post(url, headers=headers, json=payload)
         response.raise_for_status()
@@ -91,7 +98,6 @@ def main(apikey: str, query: str, count: str, types: str, user: str) -> dict:
             simplified_tweets.append(tweet_data)
 
             print(simplified_tweets)
-            print(file_content)
 
         # 整形した、浅い階層のリストを返す
         return {"result": simplified_tweets}
