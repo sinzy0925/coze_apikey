@@ -1,1 +1,1 @@
-pat_aLIqZcgpmtiHAYDnNFRQwvwpTY1b0v275GqHciRZ7Y1jI3rahJvkKqX9GaLCkT9S
+# README1.md に以下のフォーマットで記載すること。
