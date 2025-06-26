@@ -4,7 +4,7 @@ import json,time
 raw_url = "https://raw.githubusercontent.com/sinzy0925/coze_apikey/main/README1.md"
 
 
-def main(apikey: str, query: str, count: str, types: str, user: str) -> dict:
+def main(query: str, count: str, types: str, user: str) -> dict:
     
     # --- ★★★ キャッシュバスティングの処理 ★★★ ---
     # URLの末尾に、現在のUNIXタイムスタンプをダミーパラメータとして付与
@@ -14,8 +14,12 @@ def main(apikey: str, query: str, count: str, types: str, user: str) -> dict:
     try:
         response = requests.get(url_with_buster, timeout=20)
         response.raise_for_status() # 404などのエラーをチェック
-        access_token = response.text
-        print(access_token)
+        app_id       = response.text.split('\r\n')[0]
+        workflow_id  = response.text.split('\r\n')[1]
+        access_token = response.text.split('\r\n')[2]
+        print(f"app_id: {app_id}")
+        print(f"workflow_id: {workflow_id}")
+        print(f"access_token: {access_token}")
     except Exception as e:
         # どの行でどんなエラーが起きたか分かるように、より詳細なエラー情報を返す
         import traceback
@@ -23,13 +27,8 @@ def main(apikey: str, query: str, count: str, types: str, user: str) -> dict:
 
 
 
-    try:
-        apikey_dict = json.loads(apikey)
-    except json.JSONDecodeError:
-        return {"result": {"error": "Input 'apikey' is not a valid JSON string."}}
 
     url = "https://api.coze.com/v1/workflow/run"
-    #access_token = apikey_dict.get("access_token")
 
     headers = {
         "Authorization": f"Bearer {access_token}",
@@ -37,8 +36,8 @@ def main(apikey: str, query: str, count: str, types: str, user: str) -> dict:
     }
 
     payload = {
-        "app_id": apikey_dict.get("app_id"),
-        "workflow_id": apikey_dict.get("workflow_id"),
+        "app_id": app_id,
+        "workflow_id": workflow_id,
         "parameters": {
             "user": user,
             "query": query,
@@ -105,8 +104,8 @@ def main(apikey: str, query: str, count: str, types: str, user: str) -> dict:
             simplified_tweets.append(tweet_data)
 
 
-        # 整形した、浅い階層のリストを返す
-        return {"result": simplified_tweets,"xapi_raw_result":posts}
+        # 整形した、浅い階層のリスト、元の詳細データのリストを出力
+        return {"result": {"result":simplified_tweets,"raw_result":posts}}
 
     except requests.exceptions.RequestException as e:
         return {"result": {"error": f"API request failed: {e}"}}
@@ -126,5 +125,5 @@ if __name__ == "__main__":
     count="1"
     types="Top"
     user=""
-    res = main(apikey, query, count, types, user)
+    res = main(query, count, types, user)
     print(res)
